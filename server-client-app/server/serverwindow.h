@@ -5,6 +5,7 @@
 #include <QUdpSocket>
 #include <QNetworkDatagram>
 #include <QDebug>
+#include <QTime>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

@@ -6,6 +6,8 @@
 #include <QNetworkDatagram>
 #include <QDebug>
 #include <QTimer>
+#include <QRegExpValidator>
+#include <QTime>
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class ClientWindow;
@@ -21,13 +23,22 @@ public:
     ~ClientWindow();
 
 private slots:
-    void on_pushButton_clicked();
+    void on_pushButtonConnect_clicked();
+
+    void on_pushButtonSend_clicked();
+
+    void on_pushButtonDisconnect_clicked();
+
+    void on_pushButtonClearInput_clicked();
+
+    void on_pushButtonClearOuput_clicked();
 
 private:
     Ui::ClientWindow *ui;
     QUdpSocket *socket;
+    bool isConnection = false;
     void sendMessage(const QString message);
     void readSocket();
-
+    void isActiveForm(const bool active);
 };
 #endif // CLIENTWINDOW_H

@@ -9,6 +9,7 @@ ServerWindow::ServerWindow(QWidget *parent)
     socket = new QUdpSocket();
     socket->bind(QHostAddress::LocalHost, 8888);
     connect(socket, &QUdpSocket::readyRead, this, &ServerWindow::readSocketUDP);
+    ui->textEditOutput->setReadOnly(true);
 }
 
 ServerWindow::~ServerWindow()
@@ -20,8 +21,27 @@ void ServerWindow::readSocketUDP()
 {
     while(socket->hasPendingDatagrams())
     {
+        QTime time = QTime::currentTime();
         QNetworkDatagram datagram = socket->receiveDatagram();
-        qDebug() << "Client message: " << datagram.data() << "from: " << datagram.senderAddress().toString();
-        socket->writeDatagram("Hello, I server ! ", datagram.senderAddress(), datagram.senderPort());
+        QByteArray array = datagram.data();
+        QString message = QString::fromUtf8(array);
+        QString msg = "Client IP: " + datagram.senderAddress().toString() + " [" +time.toString() +  "]" + " " + message;
+        qDebug() << "Client message: " << message << "from: " << datagram.senderAddress().toString();
+        ui->textEditOutput->append(msg);
+        if(datagram.data() == "connect")
+        {
+            socket->writeDatagram("Подключено", datagram.senderAddress(), datagram.senderPort());
+            ui->textEditOutput->append(msg);
+        }
+        else
+        {
+            socket->writeDatagram(datagram.data(), datagram.senderAddress(), datagram.senderPort());
+        }
     }
 }
+
+void ServerWindow::on_pushButtonClearOutput_clicked()
+{
+    ui->textEditOutput->clear();
+}
+
